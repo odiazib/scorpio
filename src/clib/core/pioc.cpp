@@ -325,8 +325,8 @@ int PIOc_setframe_impl(int ncid, int varid, int frame)
                 {
                     spio_ltimer_stop(ios->io_fstats->wr_timer_name);
                     spio_ltimer_stop(file->io_fstats->wr_timer_name);
-                    GPTLstop("PIO:write_total");
                     GPTLstop("PIO:write_total_adios");
+                    GPTLstop("PIO:write_total");
                 }
                 spio_ltimer_stop(ios->io_fstats->tot_timer_name);
                 spio_ltimer_stop(file->io_fstats->tot_timer_name);

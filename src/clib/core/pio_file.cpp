@@ -140,11 +140,11 @@ int PIOc_createfile_impl(int iosysid, int *ncidp, const int *iotype, const char 
     iosystem_desc_t *ios;  /* Pointer to io system information. */
     int ret;               /* Return code from function calls. */
 
-    GPTLstart("PIO:write_total");
     if ((*iotype == PIO_IOTYPE_ADIOS) || (*iotype == PIO_IOTYPE_ADIOSC))
     {
         GPTLstart("PIO:write_total_adios");
     }
+    GPTLstart("PIO:write_total");
 
     /* Get the IO system info from the id. */
     if (!(ios = pio_get_iosystem_from_id(iosysid)))
@@ -945,7 +945,6 @@ int PIOc_closefile_impl(int ncid)
       PIO_SEND_ASYNC_MSG(ios, msg, &ierr, ncid);
       if(ierr != PIO_NOERR){
         if((file->iotype == PIO_IOTYPE_ADIOS) || (file->iotype == PIO_IOTYPE_ADIOSC)){
-          if(file->mode & PIO_WRITE){ GPTLstop("PIO:write_total_adios"); }
 
 #ifndef _ADIOS_BP2NC_TEST
           if(file->mode & PIO_WRITE){
@@ -956,6 +955,7 @@ int PIOc_closefile_impl(int ncid)
           spio_ltimer_stop(ios->io_fstats->tot_timer_name);
           spio_ltimer_stop(file->io_fstats->tot_timer_name);
 #endif
+          if(file->mode & PIO_WRITE){ GPTLstop("PIO:write_total_adios"); }
         }
         else{
           if(file->mode & PIO_WRITE){
@@ -1007,7 +1007,6 @@ int PIOc_closefile_impl(int ncid)
     }
 
     if((file->iotype == PIO_IOTYPE_ADIOS) || (file->iotype == PIO_IOTYPE_ADIOSC)){
-      if (file->mode & PIO_WRITE) { GPTLstop("PIO:write_total_adios"); }
 
     #ifndef _ADIOS_BP2NC_TEST
       if(file->mode & PIO_WRITE){
@@ -1018,6 +1017,7 @@ int PIOc_closefile_impl(int ncid)
       spio_ltimer_stop(ios->io_fstats->tot_timer_name);
       spio_ltimer_stop(file->io_fstats->tot_timer_name);
     #endif
+      if (file->mode & PIO_WRITE) { GPTLstop("PIO:write_total_adios"); }
     }
     else{
       if(file->mode & PIO_WRITE) {
@@ -1182,9 +1182,9 @@ int PIOc_sync_impl(int ncid)
 
     if (file->mode & PIO_WRITE)
     {
-        GPTLstart("PIO:write_total");
         if ((file->iotype == PIO_IOTYPE_ADIOS) || (file->iotype == PIO_IOTYPE_ADIOSC))
             GPTLstart("PIO:write_total_adios");
+        GPTLstart("PIO:write_total");
     }
 
     ierr = sync_file(ncid);
